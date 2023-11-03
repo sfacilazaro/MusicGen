@@ -25,17 +25,17 @@ def acc(pred,targ):
 
 def ThePhantomOfTheOpera(LL,nIT,trainPath,testPath):
     """
-    LL ------- length of the note sequence input
-    N -------- number of examples in the training set
-    nIT ------ number of iterations for backprop
-    trainPath - path to the dataset
+    LL -------- length of the note sequence input
+    N --------- number of examples in the training set
+    nIT ------- number of iterations for backprop
+    trainPath - path to the training dataset
+    testPath -- path to the testing dataset
     """
     
     L = LL
     DOR = 0.3 #drop out rate
-    #seed = np.random.randint(0,nIT*nIT)
     
-    ####################
+    #TRAIN
     #build X, Y from training set
     csvfiles = [f for f in os.listdir(trainPath) if f.endswith(".csv")]
     
@@ -64,15 +64,12 @@ def ThePhantomOfTheOpera(LL,nIT,trainPath,testPath):
     Y = np.array(yFrame)  
     
     N, L, nNotes = np.shape(X)
-    ####################
     
     phantom = tf.keras.Sequential([        
         tf.keras.layers.LSTM(100, return_sequences=True, input_shape=(L, nNotes)),        #512
         tf.keras.layers.Dropout(DOR), 
         tf.keras.layers.LSTM(100, return_sequences=False, input_shape=(L, nNotes)),        #216
-        tf.keras.layers.Dropout(DOR), 
-        #tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(216, return_sequences=False)), #216
-        #tf.keras.layers.Dropout(DOR),                          
+        tf.keras.layers.Dropout(DOR),                          
         #tf.keras.layers.BatchNormalization(),  
         tf.keras.layers.Dense(100, activation='relu'),                                    #128
         tf.keras.layers.Dense(nNotes, activation='linear')
@@ -83,17 +80,13 @@ def ThePhantomOfTheOpera(LL,nIT,trainPath,testPath):
         optimizer='RMSprop',                             #'SGD', 'RMSprop', 'adam' - optimizer algorithm
         metrics=['mean_squared_error']                   # measure to track the training
     )
-    #YY = np.repeat(Y, L, axis=1)
     YY = Y.reshape(N,nNotes)
     
     history = phantom.fit(x=X, y=YY, epochs=nIT, batch_size=len(Y))
     H = phantom.predict(X)
     accTrain = acc(H,YY)
-    
-    #return H, YY, acc(H,YY)
-    
-    
-    ####################
+
+    #TEST
     #build X, Y from testing set
     csvfiles = [f for f in os.listdir(testPath) if f.endswith(".csv")]
     
@@ -120,12 +113,10 @@ def ThePhantomOfTheOpera(LL,nIT,trainPath,testPath):
     
     X = np.array(xFrame)
     Y = np.array(yFrame)    
-    ####################
     
     N, L, nNotes = np.shape(X)
     YY = Y.reshape(N,nNotes)
     
-    #Model Evaluation: Evaluate the model on the test dataset to assess its performance
     loss, error = phantom.evaluate(X, YY)
     H = phantom.predict(X)
     accTest = acc(H,YY)
