@@ -39,7 +39,6 @@ def ThePhantomOfTheOpera(LL,nIT,trainPath,testPath):
         dataFrames.append(dataFrame)
 
     minRows = min(df.shape[0] for df in dataFrames)
-    
     if minRows < L+1:
         L = minRows-1
         print('')
@@ -58,19 +57,18 @@ def ThePhantomOfTheOpera(LL,nIT,trainPath,testPath):
     N, L, nNotes = np.shape(X)
     
     phantom = tf.keras.Sequential([        
-        tf.keras.layers.LSTM(100, return_sequences=True, input_shape=(L, nNotes)),        #512
+        tf.keras.layers.LSTM(100, return_sequences=True, input_shape=(L, nNotes)),        
         tf.keras.layers.Dropout(DOR), 
-        tf.keras.layers.LSTM(100, return_sequences=False, input_shape=(L, nNotes)),        #216
+        tf.keras.layers.LSTM(100, return_sequences=False, input_shape=(L, nNotes)),        
         tf.keras.layers.Dropout(DOR),                          
-        #tf.keras.layers.BatchNormalization(),  
-        tf.keras.layers.Dense(100, activation='relu'),                                    #128
+        tf.keras.layers.Dense(100, activation='relu'),                                    
         tf.keras.layers.Dense(nNotes, activation='linear')
     ])
 
     phantom.compile(
-        loss='mean_squared_error',                       #'categorical_crossentropy' - energy function
-        optimizer='RMSprop',                             #'SGD', 'RMSprop', 'adam' - optimizer algorithm
-        metrics=['mean_squared_error']                   # measure to track the training
+        loss='mean_squared_error',                       
+        optimizer='RMSprop',                             
+        metrics=['mean_squared_error']                   
     )
     YY = Y.reshape(N,nNotes)
     
@@ -90,11 +88,10 @@ def ThePhantomOfTheOpera(LL,nIT,trainPath,testPath):
         dataFrames.append(dataFrame)
 
     minRows = min(df.shape[0] for df in dataFrames)
-    
     if minRows < L+1:
         L = minRows-1
         print('')
-        str = f'note sequences not long enought, new length set to {L}'
+        str = f'note sequences not long enough, new length set to {L}'
         print(str)
     
     #chop chop chop
