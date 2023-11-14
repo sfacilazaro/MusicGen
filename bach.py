@@ -59,7 +59,7 @@ def ThePhantomOfTheOpera(LL,nIT,trainPath,testPath):
     phantom = tf.keras.Sequential([        
         tf.keras.layers.LSTM(100, return_sequences=True, input_shape=(L, nNotes)),        
         tf.keras.layers.Dropout(DOR), 
-        tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(100, return_sequences=False, input_shape=(L, nNotes))),        
+        tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(100, return_sequences=False)),        
         tf.keras.layers.Dropout(DOR),                          
         tf.keras.layers.Dense(100, activation='relu'),                                    
         tf.keras.layers.Dense(nNotes, activation='linear')
